@@ -1,0 +1,11 @@
+Dish Name,category,festival_tags,tradition,preparation_time,cooking_time,servings,sattvic_notes,make_ahead,kid_friendly,storage_tips
+Coconut Rice,meal,Varalakshmi Vratam,andhra_smarta,15,25,6,Pure vegetarian with no onions,TRUE,TRUE,Refrigerate up to 2 days
+Modak,sweet,Ganesh Chaturthi,universal,30,20,20,Made with jaggery and coconut,TRUE,TRUE,Store in airtight container for 3 days
+Kheer,sweet,Krishna Janmashtami,universal,10,45,8,Rich milk dessert with cardamom,FALSE,TRUE,Best served fresh same day
+Sundal,savory,Navaratri,south,10,15,4,Protein-rich legume preparation,TRUE,TRUE,Store covered for 1 day
+Pongal,meal,Makar Sankranti,south,20,30,6,Rice and lentil comfort food,TRUE,TRUE,Reheat with little water or ghee
+Halwa,sweet,Diwali,universal,15,35,10,Semolina sweet with ghee,TRUE,TRUE,Store covered for 4-5 days
+Pulihora,meal,Telugu New Year,andhra_smarta,20,15,8,Tangy tamarind rice,TRUE,TRUE,Stays fresh for 2 days
+Payasam,sweet,Onam,south,15,40,12,Creamy rice pudding with milk,FALSE,TRUE,Refrigerate and consume within 2 days
+Upma,meal,Daily offering,universal,10,15,4,Healthy semolina breakfast,FALSE,TRUE,Best served immediately
+Laddoo,sweet,All festivals,universal,25,30,25,Energy-rich sweet balls,TRUE,TRUE,Store in airtight container for 1 week

@@ -1,15 +1,29 @@
+/* Import Google Fonts for Telugu and Devanagari scripts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tiro+Telugu:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap');
+
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --sacred-orange: #FF6B35;
+  --sacred-saffron: #f97316;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-sacred-orange: var(--sacred-orange);
+  --color-sacred-saffron: var(--sacred-saffron);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-telugu: 'Noto Sans Telugu', 'Tiro Telugu', serif;
+  --font-devanagari: 'Noto Sans Devanagari', 'Tiro Devanagari Sanskrit', serif;
+  --font-sanskrit: 'Noto Serif Devanagari', 'Tiro Devanagari Sanskrit', serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +36,65 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+
+/* Custom utility classes for scripts */
+.font-telugu {
+  font-family: var(--font-telugu);
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+.font-devanagari {
+  font-family: var(--font-devanagari);
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+.font-sanskrit {
+  font-family: var(--font-sanskrit);
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Print-friendly styles for PDF generation */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .print-break-before {
+    page-break-before: always;
+  }
+  
+  .print-break-after {
+    page-break-after: always;
+  }
+  
+  .print-avoid-break {
+    page-break-inside: avoid;
+  }
+}
+
+/* Sacred content styling */
+.mantra-text {
+  line-height: 1.8;
+  letter-spacing: 0.025em;
+}
+
+.ritual-step {
+  scroll-margin-top: 2rem;
+}
+
+/* Animation for ritual progress */
+.ritual-progress {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Accessible focus styles */
+.focus-visible:focus-visible {
+  outline: 2px solid var(--sacred-orange);
+  outline-offset: 2px;
 }

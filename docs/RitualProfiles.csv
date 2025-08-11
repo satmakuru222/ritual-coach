@@ -1,0 +1,6 @@
+Name,user_id,tradition,region,language_pref,daily_time,duration_minutes,dietary_rules,kid_mode,notes
+Default Profile,user_001,andhra_smarta,south,te,06:30,30,No onion/garlic on ekadashi,TRUE,Morning practice preferred
+Vaishnava Family,user_002,vaishnava,south,hi,07:00,45,Strict vegetarian always,TRUE,Include children in evening arati
+North Indian,user_003,andhra_smarta,north,hi,06:00,25,No restrictions,FALSE,Brief morning routine
+Telugu Traditional,user_004,andhra_smarta,south,te,05:45,60,Traditional fasting rules,FALSE,Extended Saturday practice
+Modern Family,user_005,vaishnava,north,en,07:30,20,Flexible guidelines,TRUE,Quick modern adaptation
