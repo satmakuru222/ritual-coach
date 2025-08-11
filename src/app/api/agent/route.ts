@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RitualCoachAgent, AgentContext } from '@/lib/agents/claude-client';
+import { RitualCoachAgent, AgentContext, AgentProvider } from '@/lib/agents/client';
 
 let agent: RitualCoachAgent;
 
 try {
-  agent = new RitualCoachAgent();
+  // Try to initialize with preferred provider (OpenAI first, then Claude as fallback)
+  const preferredProvider: AgentProvider = process.env.PREFERRED_AGENT_PROVIDER as AgentProvider || 'openai';
+  agent = new RitualCoachAgent(preferredProvider);
+  console.log(`Initialized agent with provider: ${agent.getProvider()}`);
 } catch (error) {
-  console.error('Failed to initialize Claude agent:', error);
+  console.error('Failed to initialize agent:', error);
   // Agent will be undefined if initialization fails
 }
 
 export async function POST(request: NextRequest) {
   if (!agent) {
     return NextResponse.json(
-      { error: 'Claude agent not properly initialized. Check environment variables.' },
+      { error: 'Agent not properly initialized. Check OPENAI_API_KEY or ANTHROPIC_API_KEY environment variables.' },
       { status: 500 }
     );
   }
@@ -40,8 +43,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      provider: agent.getProvider(),
       response: response.content,
       usage: response.usage,
+      function_calls: response.function_calls,
     });
   } catch (error) {
     console.error('Agent API error:', error);
@@ -59,7 +64,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   if (!agent) {
     return NextResponse.json(
-      { error: 'Claude agent not properly initialized. Check environment variables.' },
+      { error: 'Agent not properly initialized. Check OPENAI_API_KEY or ANTHROPIC_API_KEY environment variables.' },
       { status: 500 }
     );
   }
@@ -76,6 +81,7 @@ export async function GET(request: NextRequest) {
         const dailyResponse = await agent.getDailyRitual(tradition, region, language);
         return NextResponse.json({
           success: true,
+          provider: agent.getProvider(),
           type: 'daily_ritual',
           response: dailyResponse.content,
           usage: dailyResponse.usage,
@@ -95,6 +101,7 @@ export async function GET(request: NextRequest) {
         const festivalResponse = await agent.getFestivalGuidance(festivalName, date, tradition, language);
         return NextResponse.json({
           success: true,
+          provider: agent.getProvider(),
           type: 'festival',
           response: festivalResponse.content,
           usage: festivalResponse.usage,
@@ -114,6 +121,7 @@ export async function GET(request: NextRequest) {
         const mantraResponse = await agent.getMantraGuidance(mantraName, script, language);
         return NextResponse.json({
           success: true,
+          provider: agent.getProvider(),
           type: 'mantra',
           response: mantraResponse.content,
           usage: mantraResponse.usage,
