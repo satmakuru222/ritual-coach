@@ -44,7 +44,7 @@ export class NotionClient {
     const response = await this.client.pages.create({
       parent: { database_id: this.databases.ritualProfiles },
       properties: {
-        user_id: { title: [{ text: { content: profile.user_id } }] },
+        user_id: { rich_text: [{ text: { content: profile.user_id } }] },
         tradition: { select: { name: profile.tradition } },
         region: { select: { name: profile.region } },
         language_pref: { select: { name: profile.language_pref } },
@@ -62,7 +62,7 @@ export class NotionClient {
       database_id: this.databases.ritualProfiles,
       filter: {
         property: 'user_id',
-        title: {
+        rich_text: {
           equals: userId,
         },
       },
@@ -76,7 +76,7 @@ export class NotionClient {
     const properties = page.properties;
     
     return {
-      user_id: userId,
+      user_id: (properties.user_id as any)?.rich_text?.[0]?.text?.content || userId,
       tradition: (properties.tradition as any)?.select?.name || 'andhra_smarta',
       region: (properties.region as any)?.select?.name || 'south',
       language_pref: (properties.language_pref as any)?.select?.name || 'en',

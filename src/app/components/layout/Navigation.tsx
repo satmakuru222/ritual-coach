@@ -21,7 +21,7 @@ export default function Navigation({ language = 'en' }: NavigationProps) {
       description: 'Daily rituals and overview',
     },
     {
-      href: '/rituals',
+      href: '/ritual',
       icon: BookOpen,
       label: t('ritual.daily_ritual'),
       description: 'Daily pūjā guidance',

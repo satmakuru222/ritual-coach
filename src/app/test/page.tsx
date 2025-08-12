@@ -8,6 +8,11 @@ import RitualCard from '@/app/components/ritual/RitualCard';
 import MantraCard from '@/app/components/mantra/MantraCard';
 import FestivalCard from '@/app/components/festival/FestivalCard';
 import KidsRitualStep from '@/app/components/kids/KidsRitualStep';
+import RitualTimer from '@/app/components/ritual/RitualTimer';
+import MantraDisplay from '@/app/components/ritual/MantraDisplay';
+import MaterialsChecklist from '@/app/components/ritual/MaterialsChecklist';
+import RitualProgress from '@/app/components/ritual/RitualProgress';
+import { ritualStorage } from '@/lib/ritual/storage';
 import { ChevronDown, TestTube, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function TestPage() {
@@ -15,6 +20,7 @@ export default function TestPage() {
   const [selectedTradition, setSelectedTradition] = useState<Tradition>('andhra_smarta');
   const [selectedRegion, setSelectedRegion] = useState<Region>('south');
   const [kidMode, setKidMode] = useState(false);
+  const [showRitualProgress, setShowRitualProgress] = useState(false);
   const [envStatus, setEnvStatus] = useState<{
     isValid: boolean;
     status?: {
@@ -460,6 +466,308 @@ export default function TestPage() {
                 />
               </div>
             )}
+          </div>
+
+          {/* New Ritual System Tests */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">Ritual System Components</h2>
+
+            {/* Ritual Timer */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Ritual Timer Component</h3>
+              <div className="max-w-md mx-auto">
+                <RitualTimer
+                  durationMinutes={2}
+                  stepName="Test Timer (2 minutes)"
+                  language={selectedLanguage}
+                  onComplete={() => alert('Timer completed!')}
+                  onStart={() => console.log('Timer started')}
+                />
+              </div>
+            </div>
+
+            {/* Mantra Display */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Mantra Display Component</h3>
+              <MantraDisplay
+                mantraId="test-mantra"
+                title="Test Gaṇapati Mantra"
+                text={{
+                  te: 'ॐ గం గణపతయే నమః',
+                  hi: 'ॐ गं गणपतये नमः',
+                  en: 'Om Gam Ganapataye Namaha - Salutations to Lord Ganesh, remover of obstacles',
+                  iast: 'Oṁ gaṁ gaṇapataye namaḥ',
+                }}
+                language={selectedLanguage}
+              />
+            </div>
+
+            {/* Materials Checklist */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Materials Checklist Component</h3>
+              <div className="max-w-2xl mx-auto">
+                <MaterialsChecklist
+                  materials={getTraditionFlow(selectedTradition, selectedRegion).materials}
+                  language={selectedLanguage}
+                  onAllChecked={() => alert('All materials ready!')}
+                  onMaterialToggle={(material, checked) => 
+                    console.log(`${material} ${checked ? 'checked' : 'unchecked'}`)
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Ritual Progress (Full Flow Test) */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Full Ritual Progress Flow</h3>
+              
+              {!showRitualProgress ? (
+                <div className="text-center">
+                  <p className="text-gray-600 mb-4">
+                    Test the complete ritual progress system with step navigation, 
+                    timers, mantras, and completion tracking.
+                  </p>
+                  <button
+                    onClick={() => setShowRitualProgress(true)}
+                    className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
+                  >
+                    Start Ritual Progress Test
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <div className="mb-4 text-center">
+                    <button
+                      onClick={() => setShowRitualProgress(false)}
+                      className="text-sm text-gray-600 hover:text-gray-900 underline"
+                    >
+                      ← Back to Component Tests
+                    </button>
+                  </div>
+                  <RitualProgress
+                    steps={getTraditionFlow(selectedTradition, selectedRegion).steps}
+                    language={selectedLanguage}
+                    onComplete={() => {
+                      alert('Ritual completed! Check localStorage for progress data.');
+                      setShowRitualProgress(false);
+                    }}
+                    onExit={() => setShowRitualProgress(false)}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Storage & Progress Testing */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Storage & Progress Testing</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-3">Storage Functions</h4>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => {
+                        const profile = {
+                          user_id: 'test-user',
+                          tradition: selectedTradition,
+                          region: selectedRegion,
+                          language_pref: selectedLanguage,
+                          daily_time: '06:30',
+                          duration_minutes: 30,
+                          dietary_rules: 'sattvic',
+                          kid_mode: kidMode,
+                        };
+                        ritualStorage.saveProfile(profile);
+                        alert('Test profile saved to localStorage!');
+                      }}
+                      className="w-full text-left p-2 bg-blue-50 hover:bg-blue-100 rounded border text-sm"
+                    >
+                      Save Test Profile
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        ritualStorage.startRitual();
+                        ritualStorage.markStepCompleted('test-step-1');
+                        ritualStorage.markStepCompleted('test-step-2');
+                        alert('Test progress saved! Check browser dev tools → Application → Local Storage');
+                      }}
+                      className="w-full text-left p-2 bg-green-50 hover:bg-green-100 rounded border text-sm"
+                    >
+                      Create Test Progress
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        const streak = ritualStorage.getStreak();
+                        const monthlyStats = ritualStorage.getMonthlyStats();
+                        alert(`Current Streak: ${streak.current} days\nMonthly Completion: ${monthlyStats.completionRate.toFixed(1)}%`);
+                      }}
+                      className="w-full text-left p-2 bg-purple-50 hover:bg-purple-100 rounded border text-sm"
+                    >
+                      Check Stats
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        if (confirm('Clear all ritual data? This cannot be undone.')) {
+                          ritualStorage.clearAllProgress();
+                          alert('All ritual data cleared!');
+                        }
+                      }}
+                      className="w-full text-left p-2 bg-red-50 hover:bg-red-100 rounded border text-sm text-red-700"
+                    >
+                      Clear All Data
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-3">Current Status</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="p-2 bg-gray-50 rounded">
+                      <span className="font-medium">Profile:</span> {
+                        ritualStorage.getProfile() ? '✅ Saved' : '❌ None'
+                      }
+                    </div>
+                    <div className="p-2 bg-gray-50 rounded">
+                      <span className="font-medium">Today's Progress:</span> {
+                        ritualStorage.getTodaysProgress() ? '✅ Started' : '❌ None'
+                      }
+                    </div>
+                    <div className="p-2 bg-gray-50 rounded">
+                      <span className="font-medium">Current Streak:</span> {
+                        ritualStorage.getStreak().current
+                      } days
+                    </div>
+                    <div className="p-2 bg-gray-50 rounded">
+                      <span className="font-medium">Weekly Progress:</span> {
+                        ritualStorage.getWeeklyProgress().filter(d => d.isCompleted).length
+                      }/7 days
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* API Integration Test */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Agent API Integration Test</h3>
+              
+              <div className="text-center">
+                <p className="text-gray-600 mb-4">
+                  Test the agent endpoint that provides personalized ritual guidance.
+                </p>
+                <button
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/agent', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          message: `Provide a brief ritual guidance for ${traditionLabels[selectedTradition]} tradition`,
+                          context: { tradition: selectedTradition, region: selectedRegion, language: selectedLanguage }
+                        }),
+                      });
+                      
+                      if (response.ok) {
+                        const data = await response.json();
+                        alert(`Agent Response: ${data.response || 'No response received'}`);
+                      } else {
+                        alert(`API Error: ${response.status} ${response.statusText}`);
+                      }
+                    } catch (error) {
+                      alert(`Network Error: ${error}`);
+                    }
+                  }}
+                  className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Test Agent API
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Responsiveness Test */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Mobile Responsiveness Test</h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2">Mobile (320px)</h4>
+                  <div className="text-sm text-gray-600">
+                    Components should stack vertically and maintain readability
+                  </div>
+                </div>
+                
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2">Tablet (768px)</h4>
+                  <div className="text-sm text-gray-600">
+                    Two-column layouts should work properly
+                  </div>
+                </div>
+                
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2">Desktop (1024px+)</h4>
+                  <div className="text-sm text-gray-600">
+                    Full multi-column layouts with proper spacing
+                  </div>
+                </div>
+                
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2">Touch Targets</h4>
+                  <div className="text-sm text-gray-600">
+                    All buttons should be at least 44px for touch accessibility
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Test */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Navigation & Routing Test</h2>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <a
+                href="/ritual"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-4 bg-orange-50 hover:bg-orange-100 rounded-lg border border-orange-200 text-center transition-colors"
+              >
+                <div className="font-medium text-orange-900">Main Ritual Page</div>
+                <div className="text-sm text-orange-700">/ritual</div>
+              </a>
+              
+              <a
+                href="/ritual/demo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 text-center transition-colors"
+              >
+                <div className="font-medium text-blue-900">Demo Page</div>
+                <div className="text-sm text-blue-700">/ritual/demo</div>
+              </a>
+              
+              <a
+                href="/dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-4 bg-green-50 hover:bg-green-100 rounded-lg border border-green-200 text-center transition-colors"
+              >
+                <div className="font-medium text-green-900">Dashboard</div>
+                <div className="text-sm text-green-700">/dashboard</div>
+              </a>
+              
+              <a
+                href="/onboarding"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg border border-purple-200 text-center transition-colors"
+              >
+                <div className="font-medium text-purple-900">Onboarding</div>
+                <div className="text-sm text-purple-700">/onboarding</div>
+              </a>
+            </div>
           </div>
 
           {/* Success Message */}
